@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 import json
+import time
 from django.shortcuts import render
 from django.http import HttpResponse
 from .models import Demand
@@ -29,11 +30,11 @@ def demand(request):
         print(request.GET)
         result = list()
         for item in Demand.objects.all():
-            result.append({'_id': item._id, 'name': item.name,
+            result.append({'_id': int(item._id), 'name': item.name,
                            'desc': item.desc, 'version': item.version,
                            'principal': item.principal, 'task_progress': item.task_progress,
                            'task_desc': item.task_desc,
-                           'test_case': item.test_case, 'design_doc': item.design_doc})
+                           'test_case': item.test_case, 'design_doc': item.design_doc, 'modify_time': item.modify_time})
     elif request.method == 'POST':
         print(json.loads(request.body))
         request_data = json.loads(request.body)
@@ -46,9 +47,10 @@ def demand(request):
         task_desc = request_data.get('task_desc')
         test_case = request_data.get('test_case')
         design_doc = request_data.get('design_doc')
+        modify_time = time.strftime('%Y-%m-%d %H:%M:%s', time.localtime(time.time()))
         Demand.objects.create(_id=_id, name=name, desc=desc, version=version, principal=principal,
                               task_progress=task_progress, task_desc=task_desc, test_case=test_case,
-                              design_doc=design_doc)
+                              design_doc=design_doc, modify_time=modify_time)
     elif request.method == 'DELETE':
         print(request.GET)
         _id = request.GET.get('_id')
@@ -65,9 +67,10 @@ def demand(request):
         task_desc = request_data.get('task_desc')
         test_case = request_data.get('test_case')
         design_doc = request_data.get('design_doc')
+        modify_time = time.strftime('%Y-%m-%d %H:%M:%s', time.localtime(time.time()))
         Demand.objects.filter(_id=_id).update(name=name, desc=desc, version=version, principal=principal,
                                               task_progress=task_progress, task_desc=task_desc, test_case=test_case,
-                                              design_doc=design_doc)
+                                              design_doc=design_doc, modify_time=modify_time)
     else:
         print("invalid http method")
     response = HttpResponse(json.dumps(result))

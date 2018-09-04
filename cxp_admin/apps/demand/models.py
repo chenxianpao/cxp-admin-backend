@@ -16,3 +16,4 @@ class Demand(mongoengine.Document):
     task_desc = mongoengine.StringField(max_length=256)
     design_doc = mongoengine.StringField(max_length=128, required=True)
     test_case = mongoengine.StringField(max_length=128, required=True)
+    modify_time = mongoengine.StringField(max_length=128, required=True)
